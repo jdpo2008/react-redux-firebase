@@ -15,3 +15,12 @@ code {
 .img-social {
   vertical-align: none !important;
 }
+
+.menu-top {
+  top: 50px !important;
+}
+
+.user-name {
+  font-size: .6em;
+  margin-left: 5px;
+}

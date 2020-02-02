@@ -1,9 +1,9 @@
 import React from 'react';
-import SignIn from '../SignIn';
+import Auth from '../../pages/auth';
 
 function App() {
   return (
-    <SignIn />
+    <Auth />
   );
 }
 
