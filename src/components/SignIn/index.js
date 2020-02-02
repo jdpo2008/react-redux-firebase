@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
+import firebase from "firebase/app";
 import { connect } from "react-redux";
-
 import { Grid, FormControlLabel, Checkbox } from '@material-ui/core';
 import { LockOpen, Email, Save as SaveIcon, LockOutlined as LockOutlinedIcon } from '@material-ui/icons';
 import { withStyles } from "@material-ui/styles";
@@ -17,6 +17,7 @@ import google from '../../assets/images/social/google.svg';
 import facebook from '../../assets/images/social/facebook_icon.svg';
 import twitter from '../../assets/images/social/Twitter_icon.svg';
 
+import {auth} from '../../constants/firebase';
 import * as authActions from '../../store/actions';
 
 const styles = theme => ({
@@ -26,7 +27,7 @@ const styles = theme => ({
         }
     },
     paper: {
-        marginTop: 35,
+        marginTop: 20,
         display: "flex",
         padding: 20,
         flexDirection: "column",
@@ -41,7 +42,7 @@ const styles = theme => ({
         marginTop: 1
     },
     errorText: {
-        color: "#f50057",
+        color: "#FF0000",
         marginTop: 5,
         textAlign: "center",
         fontSize: 12
@@ -70,8 +71,18 @@ class SignIn extends Component {
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        // this.googleSignInProvider = this.googleSignInProvider.bind(this);
     }
-    
+
+    doSignInWithGoogle = () =>
+        auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+
+    doSignInWithFacebook = () =>
+        auth.signInWithPopup(new firebase.auth.FacebookAuthProvider());
+
+    doSignInWithTwitter = () =>
+        auth.signInWithPopup(new firebase.auth.TwitterAuthProvider());
+
     componentDidMount() {
         this.props.verifyAuth();
     }
@@ -93,9 +104,11 @@ class SignIn extends Component {
         return (
             <div className={classes.social}>
                   <Button
+                  type="button"
                     variant="text"
                     color="default"
                     startIcon={<Icon classes={{root: classes.iconRoot}}><img className={classes.imageIcon} src={google} alt=""/></Icon>}
+                    onClick={this.doSignInWithGoogle}
                 >
                     Google
                 </Button>
@@ -103,6 +116,7 @@ class SignIn extends Component {
                     variant="text"
                     color="default"
                     startIcon={<Icon classes={{root: classes.iconRoot}}><img className={classes.imageIcon} src={facebook} alt=""/></Icon>}
+                    onClick={this.doSignInWithFacebook}
                 >
                     Facebook
                 </Button>
@@ -110,6 +124,7 @@ class SignIn extends Component {
                     variant="text"
                     color="default"
                     startIcon={<Icon classes={{root: classes.iconRoot}}><img className={classes.imageIcon} src={twitter} alt=""/></Icon>}
+                    onClick={this.doSignInWithTwitter}
                 >
                     Twitter
                 </Button>
@@ -215,7 +230,7 @@ class SignIn extends Component {
                                  <Grid container alignItems="center" justify="center">
                                     <Grid item>
                                          <Typography  style={{ fontSize: '15px' }} component="h5" variant="h6">
-                                            ------------------------------------- ó -------------------------------------
+                                            -------------------------------------- ó -------------------------------------
                                         </Typography>
                                     </Grid>
                                 </Grid>
