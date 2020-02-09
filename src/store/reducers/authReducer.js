@@ -6,7 +6,9 @@ import {
   LOGOUT_SUCCESS,
   LOGOUT_FAILURE,
   VERIFY_REQUEST,
-  VERIFY_SUCCESS
+  VERIFY_SUCCESS,
+  SIGNUP_REQUEST,
+  SIGNUP_FAILURE
 } from "../types/authTypes";
 
 export default (
@@ -18,6 +20,7 @@ export default (
     logoutError: false,
     isAuthenticated: false,
     isSubmitted: false,
+    isRegister: false,
     error: '',
     user: {}
   },
@@ -75,6 +78,19 @@ export default (
       return {
         ...state,
         isVerifying: false
+      };
+    case SIGNUP_REQUEST: 
+      return {
+         ...state,
+        isLoggingIn: true,
+        loginError: false
+      }
+    case SIGNUP_FAILURE:
+      return {
+        ...state,
+        isLoggingIn: false,
+        loginError: true,
+        error: action.error
       };
     default:
       return state;

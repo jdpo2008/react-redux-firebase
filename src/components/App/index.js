@@ -1,9 +1,24 @@
 import React from 'react';
-import Auth from '../../pages/auth';
+import { HashRouter, Route, Switch } from 'react-router-dom';
+import SignIn from '../../pages/signin';
+import SingUp from '../../pages/signup';
+import Home from '../../pages/home';
 
 function App() {
   return (
-    <Auth />
+    <HashRouter>
+      <Switch>
+          <Route exact path="/" component={Home}>
+            <Home />
+          </Route>
+          <Route exact path="/signup" component={SingUp}>
+            <SingUp />
+          </Route>
+          <Route exact path="/signin" component={SignIn}>
+            <SignIn />
+          </Route>
+      </Switch>
+    </HashRouter>
   );
 }
 

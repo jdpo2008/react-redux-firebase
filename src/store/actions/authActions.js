@@ -1,70 +1,114 @@
-import {
-  LOGIN_REQUEST,
-  LOGIN_SUCCESS,
-  LOGIN_FAILURE,
-  LOGOUT_REQUEST,
-  LOGOUT_SUCCESS,
-  LOGOUT_FAILURE,
-  VERIFY_REQUEST,
-  VERIFY_SUCCESS
-} from "../types/authTypes";
+import * as authTypes from "../types/authTypes";
 
-import { auth } from '../../constants/firebase';
+import { auth, db } from '../../constants/firebase';
 
 const requestLogin = () => {
   return {
-    type: LOGIN_REQUEST
+    type: authTypes.LOGIN_REQUEST
   };
 };
 
 const receiveLogin = user => {
   return {
-    type: LOGIN_SUCCESS,
+    type: authTypes.LOGIN_SUCCESS,
     user
   };
 };
 
 const loginError = error => {
   return {
-    type: LOGIN_FAILURE,
+    type: authTypes.LOGIN_FAILURE,
     error
   };
 };
 
 const requestLogout = () => {
   return {
-    type: LOGOUT_REQUEST
+    type: authTypes.LOGOUT_REQUEST
   };
 };
 
 const receiveLogout = () => {
   return {
-    type: LOGOUT_SUCCESS
+    type: authTypes.LOGOUT_SUCCESS
   };
 };
 
 const logoutError = error => {
   return {
-    type: LOGOUT_FAILURE,
+    type: authTypes.LOGOUT_FAILURE,
     error
   };
 };
 
 const verifyRequest = () => {
   return {
-    type: VERIFY_REQUEST
+    type: authTypes.VERIFY_REQUEST
   };
 };
 
 const verifySuccess = () => {
   return {
-    type: VERIFY_SUCCESS
+    type: authTypes.VERIFY_SUCCESS
   };
 };
 
-export const loginUser = (email, password) => dispatch => {
+const requestSignUp = () => {
+  return {
+    type: authTypes.SIGNUP_REQUEST,
+  };
+};
+
+const receiveSignUp = () => {
+  return {
+    type: authTypes.SIGNUP_SUCCESS
+  };
+};
+
+const signUpError = error => {
+  return {
+    type: authTypes.SIGNUP_FAILURE,
+    error
+  };
+};
+
+export const signupUser = (displayName, email, password) => async dispatch => {
+   dispatch(requestSignUp());
+   await auth
+    .createUserWithEmailAndPassword(email, password)
+    .then(userRecord =>  {
+      const user =  userRecord.user;
+      user.sendEmailVerification();
+      user.updateProfile(displayName, user.photoURL);
+      return db.collection('users').doc(`${user.uid}`).set({
+        uid: user.uid,
+        createAt: Date().toString,
+        displayName,
+        email: user.email,
+        dissabled: false,
+        emailVerified: user.emailVerified,
+        phoneNumber: user.phoneNumber,
+        photoURL: user.photoURL,
+        providerId: user.providerId
+      })
+    })
+    .catch(error => {
+      //Do something with the error if you want!
+      dispatch(signUpError(error));
+    })
+    .then(() => {
+      dispatch(receiveSignUp());
+    })
+    .catch(error => {
+      //Do something with the error if you want!
+      dispatch(signUpError(error));
+    });
+
+}
+
+export const loginUser = (email, password) => async dispatch => {
   dispatch(requestLogin());
-  auth
+  await auth
     .signInWithEmailAndPassword(email, password)
     .then(user => {
       dispatch(receiveLogin(user));

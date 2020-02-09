@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import firebase from "firebase/app";
+import { Link } from 'react-router-dom';
 import { connect } from "react-redux";
 import { Grid, FormControlLabel, Checkbox } from '@material-ui/core';
-import { LockOpen, Email, Save as SaveIcon, LockOutlined as LockOutlinedIcon } from '@material-ui/icons';
+import { LockOpen, Email, LockOutlined as LockOutlinedIcon } from '@material-ui/icons';
 import { withStyles } from "@material-ui/styles";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
@@ -10,24 +10,20 @@ import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import Container from "@material-ui/core/Container";
-import Icon from '@material-ui/core/Icon';
 import LinearProgress from '@material-ui/core/LinearProgress';
-
-import google from '../../assets/images/social/google.svg';
-import facebook from '../../assets/images/social/facebook_icon.svg';
-import twitter from '../../assets/images/social/Twitter_icon.svg';
-
-import {auth} from '../../constants/firebase';
+import SocialLogin from '../../components/SocialsLogin';
 import * as authActions from '../../store/actions';
+
+import Home from '../home';
 
 const styles = theme => ({
     "@global": {
         body: {
-        backgroundColor: "#fff"
+            backgroundColor: "#191919"
         }
     },
     paper: {
-        marginTop: 20,
+        marginTop: 40,
         display: "flex",
         padding: 20,
         flexDirection: "column",
@@ -67,21 +63,12 @@ class SignIn extends Component {
         this.state = {
             username: '',
             password: '',
-            submitted: false
+            submitted: false,
+            isRegister: false
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-        // this.googleSignInProvider = this.googleSignInProvider.bind(this);
     }
-
-    doSignInWithGoogle = () =>
-        auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
-
-    doSignInWithFacebook = () =>
-        auth.signInWithPopup(new firebase.auth.FacebookAuthProvider());
-
-    doSignInWithTwitter = () =>
-        auth.signInWithPopup(new firebase.auth.TwitterAuthProvider());
 
     componentDidMount() {
         this.props.verifyAuth();
@@ -99,43 +86,20 @@ class SignIn extends Component {
         this.props.loginUser(username, password);
     }
 
-    socialsLogin() {
-        const { classes } = this.props;
-        return (
-            <div className={classes.social}>
-                  <Button
-                  type="button"
-                    variant="text"
-                    color="default"
-                    startIcon={<Icon classes={{root: classes.iconRoot}}><img className={classes.imageIcon} src={google} alt=""/></Icon>}
-                    onClick={this.doSignInWithGoogle}
-                >
-                    Google
-                </Button>
-                 <Button
-                    variant="text"
-                    color="default"
-                    startIcon={<Icon classes={{root: classes.iconRoot}}><img className={classes.imageIcon} src={facebook} alt=""/></Icon>}
-                    onClick={this.doSignInWithFacebook}
-                >
-                    Facebook
-                </Button>
-                  <Button
-                    variant="text"
-                    color="default"
-                    startIcon={<Icon classes={{root: classes.iconRoot}}><img className={classes.imageIcon} src={twitter} alt=""/></Icon>}
-                    onClick={this.doSignInWithTwitter}
-                >
-                    Twitter
-                </Button>
-            </div>
-        )
+    handleRegister() {
+        this.setState({ isRegister: true });
     }
 
     getErrorMessage(code) {
         switch(code) {
             case 'auth/user-not-found' :
                 return 'Usuario y/o Password incorrectos verifica e intenta nuevamente';
+            case 'auth/user-disabled' :
+                return 'La Cuenta se encuentra deshabilitada consulte con el administrador';
+            case 'auth/wrong-password' :
+                return 'Usuario y/o Password incorrectos verifica e intenta nuevamente';
+            case 'auth/invalid-email' :
+                return 'El Email es invalido';
             default : 
                 return ''
         }
@@ -145,16 +109,10 @@ class SignIn extends Component {
         const { username, password } = this.state;
         const { classes, isLoggingIn, loginError, isAuthenticated } = this.props;
         if (isAuthenticated) {
-        return  <h1>Is isAuthenticated </h1>;//<Redirect to="/" />;
+        return  <Home />;//<Redirect to="/" />;
         } else {
              return (
                 <div className="container">
-                    <div className="row justify-content-md-center">
-                        <div className="col-md-4">
-                            
-                        </div>
-                    </div>
-                    <br />
                     <Container component="main" maxWidth="sm">
                         <Paper className={classes.paper}>
                             <Avatar className={classes.avatar}>
@@ -163,7 +121,7 @@ class SignIn extends Component {
                             <Typography component="h1" variant="h5">
                                 Iniciar Sesión
                             </Typography>
-                            <form name="form" style={{ width: '80%' }} onSubmit={this.handleSubmit}> 
+                            <form name="form" style={{ width: '75%' }} onSubmit={this.handleSubmit}> 
                                 <br />
                                 <Grid container spacing={1} alignItems="flex-end">
                                     <Grid item>
@@ -205,9 +163,9 @@ class SignIn extends Component {
                                         variant="contained"
                                         color="primary"
                                         className={classes.button}
-                                        startIcon={<SaveIcon />}
                                         disabled={isLoggingIn}
                                         type="submit"
+                                        fullWidth
                                         >
                                         Iniciar
                                     </Button>
@@ -220,7 +178,7 @@ class SignIn extends Component {
                                         </Typography>
                                     </Grid>
                                     <Grid item>
-                                        <Button disableFocusRipple disableRipple style={{ textTransform: "none" }} variant="text" color="primary">Registrate</Button>
+                                        <Link to="/signup" style={{ textTransform: "none" }} >Registrate</Link>
                                     </Grid>
                                 </Grid>
                                 <br />
@@ -230,13 +188,13 @@ class SignIn extends Component {
                                  <Grid container alignItems="center" justify="center">
                                     <Grid item>
                                          <Typography  style={{ fontSize: '15px' }} component="h5" variant="h6">
-                                            -------------------------------------- ó -------------------------------------
+                                            ----------------------------------- ó -----------------------------------
                                         </Typography>
                                     </Grid>
                                 </Grid>
                             </form>
                             <br />
-                            {this.socialsLogin()}
+                            <SocialLogin />
                         </Paper>
                     </Container>
                 </div>
@@ -249,3 +207,4 @@ const mapStateToProps = (appReducers) => {
 }
 
 export default withStyles(styles)(connect(mapStateToProps, authActions)(SignIn));
+

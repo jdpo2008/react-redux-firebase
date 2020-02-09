@@ -24,10 +24,9 @@ const styles = theme => ({
     }
 });
 
-
 export class SocialsLogins extends React.Component {
 
-     doSignInWithGoogle = () =>
+    doSignInWithGoogle = () =>
         auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
 
     doSignInWithFacebook = () =>
@@ -36,7 +35,6 @@ export class SocialsLogins extends React.Component {
     doSignInWithTwitter = () =>
         auth.signInWithPopup(new firebase.auth.TwitterAuthProvider());
 
-    
     render() {
         const { classes } = this.props;
         return (
@@ -46,7 +44,7 @@ export class SocialsLogins extends React.Component {
                     variant="text"
                     color="default"
                     startIcon={<Icon classes={{root: classes.iconRoot}}><img className={classes.imageIcon} src={google} alt=""/></Icon>}
-                    onClick={this.doSignInWithGoogle()}
+                    onClick={this.doSignInWithGoogle}
                     >
                         Google
                 </Button>
@@ -54,6 +52,7 @@ export class SocialsLogins extends React.Component {
                     variant="text"
                     color="default"
                     startIcon={<Icon classes={{root: classes.iconRoot}}><img className={classes.imageIcon} src={facebook} alt=""/></Icon>}
+                    onClick={this.doSignInWithFacebook}
                     >
                         Facebook
                 </Button>
@@ -61,6 +60,7 @@ export class SocialsLogins extends React.Component {
                     variant="text"
                     color="default"
                     startIcon={<Icon classes={{root: classes.iconRoot}}><img className={classes.imageIcon} src={twitter} alt=""/></Icon>}
+                    onClick={this.doSignInWithTwitter}
                     >
                         Twitter
                 </Button>

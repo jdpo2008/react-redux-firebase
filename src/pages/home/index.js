@@ -10,21 +10,19 @@ import MenuIcon from '@material-ui/icons/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import * as authActions from '../../store/actions';
+import SignIn from '../signin';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    flexGrow: 1,
-  },
-  menuButton: {
-    marginRight: theme.spacing(1),
-  },
-  title: {
-    flexGrow: 1,
-  },
+    root: {
+        flexGrow: 1,
+    },
+    menuButton: {
+        marginRight: theme.spacing(1),
+    },
+    title: {
+        flexGrow: 1,
+    },
 }));
-
-
-
 
 function Home(props) {
     const classes = useStyles();
@@ -36,7 +34,6 @@ function Home(props) {
     const handleProfileMenuOpen = event => {
         setAnchorEl(event.currentTarget);
     };
-    console.log(props);
     const handleMenuClose = () => {
         setAnchorEl(null);
         handleMobileMenuClose();
@@ -65,40 +62,41 @@ function Home(props) {
             <MenuItem onClick={handleLogout}><PowerOff className={classes.menuButton} color="primary"/><span className={classes.menuButton}>Salir</span></MenuItem>
         </Menu>
     );
-
-    return (
-        <div>
-             <AppBar position="static">
-                <Toolbar>
-                    <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
-                    <MenuIcon />
-                    </IconButton>
-                    <Typography variant="h6" className={classes.title}>
-                    Home
-                    </Typography>
-                    <IconButton
-                        aria-label="account of current user"
-                        aria-controls="primary-search-account-menu"
-                        aria-haspopup="true"
-                        color="inherit"
-                        onClick={handleProfileMenuOpen}
-                        >
-                        <AccountCircle /> 
-                        <span className="user-name">{props.user.displayName}</span> 
-                    </IconButton>
-                </Toolbar>
-            </AppBar>
-            {renderMenu}
-        </div>
-       
-        // <div>
-        //     <h1> Ya estas logueado, {props.user.displayName}</h1>
-        // </div>
-    )
+    console.log(props);
+    if (!props.isAuthenticated) {
+        return <SignIn />
+    } else {
+        return (
+            <div>
+                <AppBar position="static">
+                    <Toolbar>
+                        <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
+                        <MenuIcon />
+                        </IconButton>
+                        <Typography variant="h6" className={classes.title}>
+                        Home
+                        </Typography>
+                        <IconButton
+                            aria-label="account of current user"
+                            aria-controls="primary-search-account-menu"
+                            aria-haspopup="true"
+                            color="inherit"
+                            onClick={handleProfileMenuOpen}
+                            >
+                            <AccountCircle /> 
+                            <span className="user-name">{props.user.email}</span> 
+                        </IconButton>
+                    </Toolbar>
+                </AppBar>
+                {renderMenu}
+            </div>
+        )
+    }
 }
 
 const mapStateToProps = (appReducers) => {
     return {
+        isAuthenticated: appReducers.authReducer.isAuthenticated,
         user: appReducers.authReducer.user
     };;
 }
